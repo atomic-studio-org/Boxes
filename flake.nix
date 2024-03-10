@@ -21,8 +21,8 @@
 
 	cosign-generate = pkgs.writeScriptBin "cosign-generate" ''
 	  echo "DO NOT add any password, this will break your CI jobs!"
-	  ${pkgs.lib.getExe pkgs.cosign} generate-keys-pair
-	  cat cosign.key | ${pkgs.lib.getExe pkgs.gh} secret set SIGNING_SECRET --app actions --body 
+	  ${pkgs.cosign}/bin/cosign generate-key-pair
+	  cat cosign.key | ${pkgs.lib.getExe pkgs.gh} secret set SIGNING_SECRET --app actions
 	  rm cosign.key
 	'';
       });

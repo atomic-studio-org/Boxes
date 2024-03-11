@@ -1,1 +1,23 @@
-FROM ubuntu:latest
+FROM nvidia/cuda:12.2.0-devel-ubuntu22.04
+
+LABEL com.github.containers.toolbox="true" \
+	usage="This image is meant to be used with the toolbox or distrobox command" \
+	summary="A cloud-native terminal experience for CUDA development" \
+	maintainer="tulilirockz@outlook.com"
+
+COPY ./toolboxes/cudabox/files /
+
+RUN rm /etc/apt/apt.conf.d/docker-gzip-indexes /etc/apt/apt.conf.d/docker-no-languages && \
+	sed -Ei 's/^(hosts:.*)(\<files\>)\s*(.*)/\1\2 myhostname \3/' /etc/nsswitch.conf && \
+	mkdir /usr/share/empty && \ 
+	ln -s /usr/libexec/flatpak-xdg-utils/flatpak-spawn /usr/bin/ && \
+	sed -Ei '/apt-get (update|upgrade)/s/^/#/' /usr/local/sbin/unminimize && \
+	apt-get update -y && apt-get update -y \
+	yes | /usr/local/sbin/unminimize && \
+	grep -v '^#' /usr/share/cudabox/packages.txt | DEBIAN_FRONTEND=noninteractive xargs apt-get -y install && \
+	rm -rd /var/lib/apt/lists/* && \
+	ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/docker && \
+	ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/flatpak && \ 
+	ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/podman && \
+	ln -fs /usr/bin/distrobox-host-exec /usr/local/bin/rpm-ostree && \
+	echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers

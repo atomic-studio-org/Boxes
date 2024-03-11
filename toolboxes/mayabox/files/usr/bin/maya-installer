@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+MAYA_PACKAGE=$1
+shift
+
+set -euo pipefail

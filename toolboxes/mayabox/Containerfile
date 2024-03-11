@@ -1,1 +1,16 @@
-FROM ubuntu:latest
+FROM quay.io/toolbx-images/almalinux-toolbox:8
+
+LABEL com.github.containers.toolbox="true" \
+	usage="This image is meant to be used with the Toolbox or Distrobox commands" \
+	summary="A new cloud-native terminal experience for Autodesk Maya" \
+	maintainer="tulilirockz@outlook.com"
+
+COPY ./toolboxes/mayabox/files /
+
+RUN dnf update -y && \
+	dnf upgrade -y && \
+	dnf config-manager --set-enabled powertools && \
+	dnf install -y epel-release && \
+	grep -v '^#' /usr/share/mayabox/packages.txt | xargs dnf install -y && \
+	dnf clean all -y && \
+	rm -rf /tmp/*

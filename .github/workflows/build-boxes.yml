@@ -1,4 +1,4 @@
-name: Build and Push CudaBox 
+name: Build and Push Toolboxes 
 on:
   schedule:
     - cron: '20 22 * * *'  # 10:20pm everyday
@@ -6,8 +6,6 @@ on:
   merge_group:
   workflow_dispatch:
 env:
-    IMAGE_NAME: cudabox 
-    IMAGE_TAGS: latest
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 concurrency:
@@ -24,6 +22,12 @@ jobs:
       id-token: write
     strategy:
       fail-fast: false
+      matrix:
+        box:
+          - name: cudabox
+            tags: latest
+          - name: mayabox
+            tags: latest
     steps:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -41,7 +45,7 @@ jobs:
         id: meta
         with:
           images: |
-            ${{ env.IMAGE_NAME }}
+            ${{ matrix.box.name }}
           labels: |
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/ublue-os/boxkit/main/README.md
 
@@ -50,9 +54,9 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           containerfiles: |
-            ./toolboxes/cudabox/Containerfile
-          image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.IMAGE_TAGS }}
+            ./toolboxes/${{matrix.box_name}}/Containerfile
+          image: ${{ matrix.box.name }}
+          tags: ${{ matrix.box.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 

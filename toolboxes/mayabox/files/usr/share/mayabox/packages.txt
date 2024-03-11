@@ -5,8 +5,6 @@ zlib
 openssl-libs
 nss
 dbus
-lsb-core
-libpcre16
 mesa-libGLU
 mesa-libGLw
 gamin

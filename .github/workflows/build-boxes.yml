@@ -2,6 +2,9 @@ name: Build and Push Toolboxes
 on:
   schedule:
     - cron: '20 22 * * *'  # 10:20pm everyday
+  push:
+    paths:
+      - toolboxes/**
   pull_request:
   merge_group:
   workflow_dispatch:
@@ -29,8 +32,7 @@ jobs:
           - name: mayabox
             tags: latest
     steps:
-      # Checkout push-to-registry action GitHub repository
-      - name: Checkout Push to Registry action
+      - name: Checkout repo data 
         uses: actions/checkout@v4
 
       - name: Verify toolbox
@@ -98,7 +100,7 @@ jobs:
         run: |
           echo "${{ env.COSIGN_PRIVATE_KEY }}" > cosign.key
           wc -c cosign.key
-          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}@${TAGS}
+          cosign sign -y --key cosign.key ${{ steps.registry_case.outputs.lowercase }}/${{ matrix.box.name }}@${TAGS}
         env:
           TAGS: ${{ steps.push.outputs.digest }}
           COSIGN_EXPERIMENTAL: false

@@ -1,0 +1,11 @@
+version: "3"
+
+tasks:
+  build:
+    cmds: 
+      - "{{.CONTAINER_MANAGER}} buildx build -f {{.ROOT_BOXES}}/{{.CONTAINER}}/Containerfile ."
+    vars:
+      ROOT_BOXES: toolboxes
+      CONTAINER_MANAGER: docker
+    requires: 
+      vars: [CONTAINER]

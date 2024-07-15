@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Verify toolbox
-        uses: EyeCantCU/cosign-action/verify@v0.2.2
+        uses: EyeCantCU/cosign-action/verify@v0.3.0
         with:
           containers: ubuntu-toolbox:22.04
           pubkey: https://raw.githubusercontent.com/toolbx-images/images/main/quay.io-toolbx-images.pub
